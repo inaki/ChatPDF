@@ -1,8 +1,11 @@
 import os
+from dotenv import load_dotenv
 import tempfile
 import streamlit as st
 from streamlit_chat import message
 from pdfquery import PDFQuery
+
+load_dotenv()
 
 st.set_page_config(page_title="ChatPDF")
 
@@ -46,25 +49,13 @@ def is_openai_api_key_set() -> bool:
 def main():
     if len(st.session_state) == 0:
         st.session_state["messages"] = []
-        st.session_state["OPENAI_API_KEY"] = os.environ.get("OPENAI_API_KEY", "")
+        st.session_state["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY", "")
         if is_openai_api_key_set():
             st.session_state["pdfquery"] = PDFQuery(st.session_state["OPENAI_API_KEY"])
         else:
             st.session_state["pdfquery"] = None
 
     st.header("ChatPDF")
-
-    if st.text_input("OpenAI API Key", value=st.session_state["OPENAI_API_KEY"], key="input_OPENAI_API_KEY", type="password"):
-        if (
-            len(st.session_state["input_OPENAI_API_KEY"]) > 0
-            and st.session_state["input_OPENAI_API_KEY"] != st.session_state["OPENAI_API_KEY"]
-        ):
-            st.session_state["OPENAI_API_KEY"] = st.session_state["input_OPENAI_API_KEY"]
-            if st.session_state["pdfquery"] is not None:
-                st.warning("Please, upload the files again.")
-            st.session_state["messages"] = []
-            st.session_state["user_input"] = ""
-            st.session_state["pdfquery"] = PDFQuery(st.session_state["OPENAI_API_KEY"])
 
     st.subheader("Upload a document")
     st.file_uploader(
@@ -82,9 +73,15 @@ def main():
     display_messages()
     st.text_input("Message", key="user_input", disabled=not is_openai_api_key_set(), on_change=process_input)
 
+<<<<<<< Updated upstream
     st.divider()
     st.markdown("Source code: [Github](https://github.com/Anil-matcha/ChatPDF)")
 
+=======
+    st.markdown("---")
+    st.markdown("Source code: [Github](https://github.com/inaki/ChatPDF)")
+    st.markdown("Original source code: [Github](https://github.com/Anil-matcha/ChatPDF)")
+>>>>>>> Stashed changes
 
 if __name__ == "__main__":
     main()
